@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detach-Context</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 16px;
+        }
+        button {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Detach Instance</h2>
+    <p>Add a note explaining why you are detaching this component:</p>
+    <textarea id="rationale" placeholder="Enter your note..."></textarea>
+    <button id="detach">Detach</button>
+    <button id="cancel">Cancel</button>
+
+    <script>
+      let nodeId = null;
+  
+      // Listen for messages from the plugin
+      window.onmessage = (event) => {
+          const { type, nodeId: id } = event.data.pluginMessage;
+          if (type === 'initialize') {
+              nodeId = id;
+          }
+      };
+  
+      document.getElementById('detach').addEventListener('click', () => {
+          const rationale = document.getElementById('rationale').value.trim();
+          parent.postMessage({ pluginMessage: { type: 'detachInstance', rationale, nodeId } }, '*');
+      });
+  
+      document.getElementById('cancel').addEventListener('click', () => {
+          parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
+      });
+  </script>
+  
+</body>
+</html>
